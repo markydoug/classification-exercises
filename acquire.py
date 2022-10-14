@@ -2,8 +2,11 @@ import pandas as pd
 import numpy as np
 import os
 
-from env import get_db_url
+from env import user, password, host
 from pydataset import data
+
+def get_db_url(database):
+    return f'mysql+pymysql://{user}:{password}@{host}/{database}'
 
 #function to go get passenger data from the titanic database
 def get_titanic_data():
@@ -15,7 +18,7 @@ def get_titanic_data():
     else:
         df = pd.read_sql('''SELECT * FROM passengers;''', get_db_url('titanic_db'))
         #save the data locally for later use
-        df.to_csv(filename)
+        df.to_csv(filename, index=False)
 
         return df
 
@@ -27,11 +30,11 @@ def get_iris_data():
         return pd.read_csv(filename)
     #else go get the data
     else:
-        df =  pd.read_sql('''SELECT * FROM measurements 
-        JOIN species USING(species_id);
+        df =  pd.read_sql('''SELECT * FROM species 
+        JOIN measurements USING(species_id);
         ''', get_db_url('iris_db'))
         #save the data locally for later use
-        df.to_csv(filename)
+        df.to_csv(filename, index=False)
         
         return df
 
@@ -55,6 +58,6 @@ def get_telco_data():
         JOIN payment_types pt USING(payment_type_id);
         ''', get_db_url('telco_churn'))
         #save the data locally for later use
-        df.to_csv(filename)
+        df.to_csv(filename,index=False)
         
         return df
