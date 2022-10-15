@@ -47,15 +47,10 @@ def get_telco_data():
     #else go get the data
     else:
         df = pd.read_sql('''SELECT * 
-        FROM customer_details cd
-        JOIN customer_contracts cc USING(customer_id)
-        JOIN contract_types ct USING(contract_type_id)
-        JOIN customer_churn cch USING(customer_id)
-        JOIN customer_payments cp USING(customer_id)
-        JOIN customer_signups cs USING(customer_id)
-        JOIN customer_subscriptions csub USING(customer_id)
-        JOIN internet_service_types ist USING(internet_service_type_id)
-        JOIN payment_types pt USING(payment_type_id);
+                FROM customers
+                JOIN contract_types USING (contract_type_id)
+                JOIN internet_service_types USING (internet_service_type_id)
+                JOIN payment_types USING (payment_type_id)
         ''', get_db_url('telco_churn'))
         #save the data locally for later use
         df.to_csv(filename,index=False)
