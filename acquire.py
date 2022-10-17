@@ -8,26 +8,36 @@ from pydataset import data
 def get_db_url(database):
     return f'mysql+pymysql://{user}:{password}@{host}/{database}'
 
+def new_titanic_data():
+    '''
+    This function reads the titanic data from the Codeup db into a df.
+    '''
+    # Create SQL query.
+    sql_query = 'SELECT * FROM passengers'
+    
+    # Read in DataFrame from Codeup db.
+    df = pd.read_sql(sql_query, get_db_url('titanic_db'))
+
 #function to go get passenger data from the titanic database
 def get_titanic_data():
     filename = 'titanic.csv'
     #if cached file exists use it
     if os.path.isfile(filename):
-        return pd.read_csv(filename)
+        df = pd.read_csv(filename)
     #else go get the data
     else:
-        df = pd.read_sql('''SELECT * FROM passengers;''', get_db_url('titanic_db'))
+        df = new_titanic_data()
         #save the data locally for later use
         df.to_csv(filename, index=False)
 
-        return df
+    return df
 
 #function to go get species data from the iris database
 def get_iris_data():
     filename = 'iris.csv'
     #if cached file exists use it
     if os.path.isfile(filename):
-        return pd.read_csv(filename)
+        df = pd.read_csv(filename)
     #else go get the data
     else:
         df =  pd.read_sql('''SELECT * FROM species 
@@ -36,14 +46,14 @@ def get_iris_data():
         #save the data locally for later use
         df.to_csv(filename, index=False)
         
-        return df
+    return df
 
 #function to go get customer data from the telco_churn database
 def get_telco_data():
     filename = 'telco.csv'
     #if cached file exists use it
     if os.path.isfile(filename):
-        return pd.read_csv(filename)
+        df = pd.read_csv(filename)
     #else go get the data
     else:
         df = pd.read_sql('''SELECT * 
@@ -55,4 +65,4 @@ def get_telco_data():
         #save the data locally for later use
         df.to_csv(filename,index=False)
         
-        return df
+    return df
