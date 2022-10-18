@@ -18,7 +18,7 @@ def prep_iris(df):
 
 def prep_titanic(df):
     df.drop_duplicates(inplace=True)
-    df.drop(columns=['passenger_id','embarked', 'pclass', 'age'], inplace=True)
+    df.drop(columns=['passenger_id','embarked', 'pclass', 'age','deck'], inplace=True)
     df['embark_town'] = df.embark_town.fillna(value='Southampton')
     dummy_df = pd.get_dummies(df[['sex','class','embark_town']], dummy_na=False, drop_first=[True, True])
     df = pd.concat([df, dummy_df], axis=1)
