@@ -42,11 +42,11 @@ def prep_telco(df):
 def train_validate_test_split(df, target):
     
     train, test = train_test_split(df,
-                               train_size = 0.8,
+                               test_size = 0.1,
                                stratify = df[target],
                                random_state=1234)
     train, validate = train_test_split(train,
-                               train_size = 0.7,
+                               test_size = 0.166666666666,
                                stratify = train[target],
                                random_state=1234)
     
