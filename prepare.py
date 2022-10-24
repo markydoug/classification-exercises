@@ -1,4 +1,3 @@
-from lib2to3.pgen2.pgen import DFAState
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -30,6 +29,9 @@ def prep_iris(df):
 
 
 def prep_titanic(df):
+
+    '''Prepares acquired titanic data for exploration'''
+
     df.drop_duplicates(inplace=True)
     df.drop(columns=['passenger_id','embarked', 'pclass', 'age','deck'], inplace=True)
     df['embark_town'] = df.embark_town.fillna(value='Southampton')
@@ -38,12 +40,35 @@ def prep_titanic(df):
     
     return df
 
+
+def impute_mean_age(train, validate, test):
+    '''
+    This function imputes the mean of the age column for
+    observations with missing values.
+    Returns transformed train, validate, and test df.
+    '''
+    # create the imputer object with mean strategy
+    imputer = SimpleImputer(strategy = 'mean')
+    
+    # fit on and transform age column in train
+    train['age'] = imputer.fit_transform(train[['age']])
+    
+    # transform age column in validate
+    validate['age'] = imputer.transform(validate[['age']])
+    
+    # transform age column in test
+    test['age'] = imputer.transform(test[['age']])
+    
+    return train, validate, test
+
 ###################################################################################
 ################################## TELCO DATA #####################################
 ###################################################################################
 
 
 def prep_telco(df):
+    '''Prepares acquired teclo data for exploration'''
+
     df.drop_duplicates(inplace=True)
     df.drop(columns=['customer_id','payment_type_id', 'internet_service_type_id','contract_type_id'], inplace=True)
     df = df[df.total_charges!=' ']
@@ -64,7 +89,7 @@ def prep_telco(df):
 
 def train_validate_test_split(df, target):
     '''
-    Takes in a data frame and the target variable and returns
+    Takes in a data frame and the target variable column  and returns
     train (80%), validate (15%), and test (10%) data frames.
     '''
     train, test = train_test_split(df,test_size = 0.1, stratify = df[target], random_state=27)
@@ -72,6 +97,38 @@ def train_validate_test_split(df, target):
     
     return train, validate, test
 
+def prep_for_model(train, validate, test, target):
+    '''
+    Takes in train, validate, and test data frames
+    then splits  for X (all variables but target variable) 
+    and y (only target variable) for each data frame
+    '''
+    drop_columns = list(train.select_dtypes(include='object').columns) + [target]
+
+    X_train = train.drop(columns=drop_columns)
+    y_train = train[target]
+
+    X_validate = validate.drop(columns=drop_columns)
+    y_validate = validate[target]
+
+    X_test = test.drop(columns=drop_columns)
+    y_test = test[target]
+
+    return X_train, y_train, X_validate, y_validate, X_test, y_test
+
+def prep_df_for_model(df, target):
+    '''
+    Takes in a data frame and the target variable column, splits the data
+    into train (80%), validate (15%), and test (10%) data frames
+    then splits again for X (all variables but target variable) and 
+    y (only target variable) for each data frame
+    '''
+    
+    train, validate, test = train_validate_test_split(df, target)
+
+    X_train, y_train, X_validate, y_validate, X_test, y_test = prep_for_model(train, validate, test, target)
+
+    return X_train, y_train, X_validate, y_validate, X_test, y_test
 
 ###################################################################################
 ################################## EXPLORE DATA ###################################
