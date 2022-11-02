@@ -103,7 +103,7 @@ def prep_for_model(train, validate, test, target):
     then splits  for X (all variables but target variable) 
     and y (only target variable) for each data frame
     '''
-    drop_columns = list(train.select_dtypes(include='object').columns) + [target]
+    drop_columns = list(train.select_dtypes(exclude=np.number).columns) + [target]
 
     X_train = train.drop(columns=drop_columns)
     y_train = train[target]
@@ -152,7 +152,7 @@ def explore_cat_uvar(df):
     Takes in a data frame and a list of categorical variables
     Returns univarite stats
     '''
-    cat_vars = list(df.select_dtypes(include='object').columns)
+    cat_vars = list(df.select_dtypes(excludes=np.number).columns)
     for col in cat_vars:
         print(col)
         print(df[col].value_counts())
@@ -178,7 +178,7 @@ def explore_cat_bvar(df, target):
     Takes in a data frame, target variable, and a 
     list of categorical variables. Returns bivarite stats 
     '''
-    cat_vars = list(df.select_dtypes(include='object').columns)
+    cat_vars = list(df.select_dtypes(excludes=np.number).columns)
     for col in cat_vars:
         sns.barplot(x=col, y=target, data=df)
         rate = df[target].mean()
